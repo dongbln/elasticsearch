@@ -42,9 +42,14 @@ curl localhost:9200/productSearchIndex/books/firstID/_update  -d '
 }
 }'
 ```
-To delete the document
+To delete the document with its ID
 ```
 curl -XDELETE localhost:9200/productSearchIndex/books/firstID?pretty
+```
+To delete the whole index
+
+```
+curl -XDELETE localhost:9200/productSearchIndex
 ```
 
 
