@@ -28,4 +28,28 @@ curl -XPUT 'localhost:9200/productsSearchIndex/books/firstID -d '
 "year": 2015
 }'
 ```
+To view the document
+```
+curl localhost:9200/productSearchIndex/books/firstID?pretty
+```
+To update the document
+
+```
+curl localhost:9200/productSearchIndex/books/firstID/_update  -d '
+{
+"doc" : {
+	"published_by": " ABD Publischer"
+}
+}'
+```
+To delete the document
+```
+curl -XDELETE localhost:9200/productSearchIndex/books/firstID?pretty
+```
+
+
+
+
+
+
 
