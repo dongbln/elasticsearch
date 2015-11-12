@@ -52,6 +52,16 @@ To delete the whole index
 curl -XDELETE localhost:9200/productSearchIndex
 ```
 
+## Search
+Search a document
+```
+curl  'localhost:9200/productSearchIndex/_search?q=name:tom&pretty' | more
+```
+Search a document with the ```OR``` operator
+```
+curl  'localhost:9200/productSearchIndex/_search?q=name:tom+OR+name:max&pretty' | more
+```
+Or alternativ
 
 
 
