@@ -189,6 +189,20 @@ curl -XGET "http://localhost:9200/my_index/userevents_nested/_search" -d'
       }
    }
 }'
+# Query nested objects across multiple types with scripts
+curl -XPOST "http://localhost:9200/my_index/_search" -d'
+{  "size": 0, 
+   "query": {
+      "filtered": {
+         "filter": {
+            "script": {
+               "script": "doc[\"onsite.userkey\"].value == doc[\"crm.eid\"].value"
+            }
+         }
+      }
+   }
+}'
+
 ```
 
 
