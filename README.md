@@ -63,7 +63,133 @@ curl  'localhost:9200/productSearchIndex/_search?q=name:tom+OR+name:max&pretty' 
 ```
 Or alternativ
 
+# Example for mapping and query data from multiple data model in Elasticsearch (Nested,Denormalizing)
 
+```
+curl -XPUT "http://localhost:9200/my_index/views/1" -d'
+{
+   "userkey": "dex"
+}'
+curl -XPUT "http://localhost:9200/my_index/views/2" -d'
+{
+   "userkey": "ted"
+}'
+curl -XPUT "http://localhost:9200/my_index/clicks/1" -d'
+{
+"userkey": "dex"
+}'
+curl -XPUT "http://localhost:9200/my_index/clicks/2" -d'
+{
+"userkey": "dg"
+}'
+
+# Denormalizing
+curl -XPUT "http://localhost:9200/my_index/denom/1" -d'
+{
+"eid": "mmx",
+"userkey":"xxo"
+
+}'
+curl -XPUT "http://localhost:9200/my_index/denom/2" -d'
+{
+"eid": "34",
+"userkey":"34"
+
+}'
+# Query denomalizing with script
+curl -XPOST "http://localhost:9200/my_index/_search" -d'
+{
+   "query": {
+      "filtered": {
+         "filter": {
+            "script": {
+               "script": "doc[\"userkey\"].value == doc[\"eid\"].value"
+            }
+         }
+      }
+   }
+}'
+
+
+# Mapping for nested data model
+curl -XPUT "http://localhost:9200/my_index/userevents_nested/_mapping" -d'
+{
+   "userevents_nested": {
+      "properties": {
+         "crm": {
+            "type": "nested"
+         },
+         "onsite": {
+            "type": "nested"
+         }
+      }
+   }
+}'
+
+# Index nested data model
+curl -XPUT "http://localhost:9200/my_index/userevents_nested/1" -d'
+{
+   "crm": [
+      {
+         "eid": "xx"
+      },
+      {
+         "eid": "cc"
+      }
+   ],
+   "onsite": [
+      {
+         "userkey": "xx"
+      },
+      {
+         "userkey": "bb"
+      }
+   ]
+}'
+
+# Query nested data
+curl -XGET "http://localhost:9200/my_index/userevents_nested/_search" -d'
+{
+   "query": {
+      "bool": {
+         "must": [
+            {
+               "nested": {
+                  "path": "crm",
+                  "query": {
+                     "bool": {
+                        "must": [
+                           {
+                              "match": {
+                                 "crm.eid": "xx"
+                              }
+                           }
+                        ]
+                     }
+                  }
+               }
+            },
+            {
+               "nested": {
+                  "path": "onsite",
+                  "query": {
+                     "bool": {
+                        "must": [
+                           {
+                              "match": {
+                                 "onsite.userkey": "xx"
+                              }
+                           }
+                        ]
+                     }
+                  }
+               }
+            }
+         ]
+      }
+   }
+}'
+```
 
 
 
